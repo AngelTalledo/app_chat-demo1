@@ -22,23 +22,25 @@ io.on('connection', (client) => {
         let personas = usuarios.addPersona(client.id, usuario.nombre, usuario.sala);
 
         client.broadcast.to(usuario.sala).emit('listPerson',  usuarios.getPersonasPorSala(usuario.sala));
-
+        client.broadcast.to(usuario.sala).emit('crearMensaje', crearMensaje('Administrador', usuario.nombre + ' se unió '));
         callback( usuarios.getPersonasPorSala(usuario.sala));
     });
 
     client.on('disconnect', () => {
         let deleteUser = usuarios.deletePersona(client.id);
-        client.broadcast.to(deleteUser.sala).emit('crearMensaje', crearMensaje('Administrador', deleteUser.nombre + ' Salió..'));
+        client.broadcast.to(deleteUser.sala).emit('crearMensaje', crearMensaje('Administrador', deleteUser.nombre + ' Salió'));
         client.broadcast.to(deleteUser.sala).emit('listPerson', usuarios.getPersonasPorSala(deleteUser.sala));
 
     });
 
-    client.on('crearMensaje', (data) => {
+    client.on('crearMensaje', (data , callback) => {
 
         let _persona = usuarios.getPersonaId(client.id);
 
         let mensaje = crearMensaje(_persona.nombre, data.mensaje);
         client.broadcast.to(_persona.sala).emit('crearMensaje', mensaje);
+   
+        callback(mensaje);
     });
 
     //mensajePrivado

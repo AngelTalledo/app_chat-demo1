@@ -15,6 +15,7 @@ socket.on('connect', function () {
 
     socket.emit('entrarChat', usuario, function (resp) {
         console.log(resp);
+        renderizarUsuarios(resp);
     });
 });
 
@@ -27,18 +28,13 @@ socket.on('disconnect', function () {
 
 socket.on('crearMensaje', function (mensaje) {
 
-    console.log(mensaje);
+    renderMensaje(mensaje,false);
+    scrollBottom();
 
 });
 
 
 // Enviar información
-socket.emit('enviarMensaje', {
-    usuario: 'Fernando',
-    mensaje: 'Hola Mundo'
-}, function (resp) {
-    console.log('respuesta server: ', resp);
-});
 
  
  
@@ -46,6 +42,7 @@ socket.emit('enviarMensaje', {
 socket.on('listPerson', function (person) {
 
     console.log('Servidor:', person);
+    renderizarUsuarios(person);
 
 });
 
